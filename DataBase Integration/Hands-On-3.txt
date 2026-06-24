@@ -1,0 +1,230 @@
+-- ==========================
+-- Hands-On 3
+-- ==========================
+
+-- ==========================================
+-- Task 1: Subqueries
+-- ==========================================
+
+-- Question 35:
+-- Display students enrolled in more courses than the
+-- average number of enrollments per student.
+
+SELECT
+    s.student_id,
+    s.first_name,
+    s.last_name,
+    COUNT(e.course_id) AS total_courses
+FROM students s
+JOIN enrollments e
+ON s.student_id = e.student_id
+GROUP BY
+    s.student_id,
+    s.first_name,
+    s.last_name
+HAVING COUNT(e.course_id) >
+(
+    SELECT AVG(course_count)
+    FROM
+    (
+        SELECT COUNT(*) AS course_count
+        FROM enrollments
+        GROUP BY student_id
+    ) AS avg_course_count
+);
+
+-- ==========================================
+-- Question 36:
+-- Display courses where every enrolled student
+-- has received grade 'A'.
+-- ==========================================
+
+SELECT c.course_name
+FROM courses c
+WHERE NOT EXISTS
+(
+    SELECT 1
+    FROM enrollments e
+    WHERE e.course_id = c.course_id
+    AND e.grade <> 'A'
+)
+AND EXISTS
+(
+    SELECT 1
+    FROM enrollments e
+    WHERE e.course_id = c.course_id
+);
+
+-- ==========================================
+-- Question 37:
+-- Display the highest-paid professor
+-- from each department.
+-- ==========================================
+
+SELECT
+    p.prof_name,
+    p.salary,
+    d.dept_name
+FROM departments d
+JOIN professors p
+ON p.department_id = d.department_id
+WHERE p.salary =
+(
+    SELECT MAX(p2.salary)
+    FROM professors p2
+    WHERE p2.department_id = p.department_id
+);
+
+-- ==========================================
+-- Question 38:
+-- Display departments whose average
+-- professor salary is greater than 85000.
+-- ==========================================
+
+SELECT *
+FROM
+(
+    SELECT
+        d.dept_name,
+        ROUND(AVG(p.salary),2) AS average_salary
+    FROM departments d
+    JOIN professors p
+    ON d.department_id = p.department_id
+    GROUP BY d.dept_name
+) AS department_average
+WHERE average_salary > 85000;
+
+-- ==========================================
+-- Task 2: Views
+-- ==========================================
+
+-- Step 39:
+-- Create a view showing student name,
+-- department, total enrolled courses and GPA.
+
+CREATE VIEW vw_student_enrollment_summary AS
+
+SELECT
+    s.first_name || ' ' || s.last_name AS student_name,
+    d.dept_name,
+    COUNT(e.course_id) AS total_courses,
+    AVG
+    (
+        CASE
+            WHEN e.grade = 'A' THEN 4
+            WHEN e.grade = 'B' THEN 3
+            WHEN e.grade = 'C' THEN 2
+            WHEN e.grade = 'D' THEN 1
+            WHEN e.grade = 'F' THEN 0
+        END
+    ) AS gpa
+
+FROM students s
+
+INNER JOIN departments d
+ON s.department_id = d.department_id
+
+LEFT JOIN enrollments e
+ON s.student_id = e.student_id
+
+GROUP BY
+    s.student_id,
+    s.first_name,
+    s.last_name,
+    d.dept_name;
+
+-- Display the created view
+
+SELECT *
+FROM vw_student_enrollment_summary;
+
+-- ==========================================
+-- Step 40:
+-- Create a view displaying course statistics.
+-- ==========================================
+
+CREATE VIEW vw_course_stats AS
+
+SELECT
+    c.course_name,
+    c.course_code,
+    COUNT(e.enrollment_id) AS total_enrollments,
+    ROUND
+    (
+        AVG
+        (
+            CASE
+                WHEN e.grade = 'A' THEN 4
+                WHEN e.grade = 'B' THEN 3
+                WHEN e.grade = 'C' THEN 2
+                WHEN e.grade = 'D' THEN 1
+                WHEN e.grade = 'F' THEN 0
+            END
+        ),
+        2
+    ) AS avg_gpa
+
+FROM courses c
+
+LEFT JOIN enrollments e
+ON c.course_id = e.course_id
+
+GROUP BY
+    c.course_id,
+    c.course_name,
+    c.course_code;
+
+-- Display the created course statistics view
+
+SELECT *
+FROM vw_course_stats;
+
+-- ==========================================
+-- Step 41:
+-- Display students having GPA greater than 3.0.
+-- ==========================================
+
+SELECT *
+FROM vw_student_enrollment_summary
+WHERE gpa > 3.0;
+
+-- ==========================================
+-- Step 42:
+-- Attempt to update the view.
+-- This will fail because the view is created
+-- using JOINs and aggregate functions.
+-- ==========================================
+
+UPDATE vw_student_enrollment_summary
+SET student_name = 'Arjun Kumar'
+WHERE student_name = 'Arjun Mehta';
+
+-- ==========================================
+-- Step 43:
+-- Drop the existing views.
+-- ==========================================
+
+DROP VIEW vw_course_stats;
+
+DROP VIEW vw_student_enrollment_summary;
+
+-- Recreate the student view using
+-- WITH CHECK OPTION so that inserted or
+-- updated rows must satisfy the WHERE clause.
+
+CREATE VIEW vw_student_enrollment_summary AS
+
+SELECT
+    student_id,
+    first_name,
+    last_name,
+    email,
+    enrollment_year
+FROM students
+WHERE enrollment_year >= 2022
+WITH CHECK OPTION;
+
+-- Display the recreated view
+
+SELECT *
+FROM vw_student_enrollment_summary;

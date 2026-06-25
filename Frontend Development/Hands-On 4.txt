@@ -138,3 +138,333 @@ Promise.all([
     console.log("Promise.all Error:", error);
 
 });
+
+
+// ======================================================
+// TASK 2 Step (50 - 54)
+
+// ======================================================
+
+// ======================================================
+// Step 50
+// Create a reusable function to fetch data from any API
+// ======================================================
+
+async function apiFetch(url) {
+
+    try {
+
+        // Send a request to the given URL
+        const response = await fetch(url);
+
+        // Check if the request was successful (status code 200-299)
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        // Convert the response into a JavaScript object
+        const data = await response.json();
+
+        // Return the fetched data
+        return data;
+
+    }
+    catch (error) {
+
+        // Pass the error to the function that called apiFetch()
+        throw error;
+
+    }
+
+}
+
+
+<!-- ==============================================
+     Step 51
+     Notifications Section
+============================================== -->
+
+<section id="notifications">
+
+    <h2>Notifications</h2>
+
+    <!-- Notifications will be added here dynamically -->
+    <div id="notification-list"></div>
+
+</section>
+
+// ==============================================
+// Load notifications from API
+// ==============================================
+
+// Select notification container
+const notificationList = document.querySelector("#notification-list");
+
+// Function to fetch and display notifications
+async function loadNotifications() {
+
+    // Fetch posts using reusable apiFetch()
+    const posts = await apiFetch(
+        "https://jsonplaceholder.typicode.com/posts"
+    );
+
+    // Display only first 5 posts
+    posts.slice(0, 5).forEach(post => {
+
+        // Create a new div element
+        const card = document.createElement("div");
+
+        // Assign CSS class
+        card.className = "notification-card";
+
+        // Add notification title and body
+        card.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.body}</p>
+        `;
+
+        // Add the notification card to the page
+        notificationList.appendChild(card);
+
+    });
+
+}
+
+// Load notifications when the page opens
+loadNotifications();
+
+<!-- ==============================================
+     Step 52
+     Loading Indicator
+============================================== -->
+
+<section id="notifications">
+
+    <h2>Notifications</h2>
+
+    <!-- Loading message -->
+    <p id="loading-message">Loading notifications...</p>
+
+    <!-- Notification cards will be added here -->
+    <div id="notification-list"></div>
+
+</section>
+
+/* ==============================================
+   Loading Message Styling
+============================================== */
+
+#loading-message{
+    display: none;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+
+// ==============================================
+// Show Loading Message While Fetching Notifications
+// ==============================================
+
+// Select notification container
+const notificationList = document.querySelector("#notification-list");
+
+// Select loading message
+const loadingMessage = document.querySelector("#loading-message");
+
+// Function to fetch notifications
+async function loadNotifications() {
+
+    // Show loading message
+    loadingMessage.style.display = "block";
+
+    // Remove previous notifications
+    notificationList.innerHTML = "";
+
+    // Fetch notifications
+    const posts = await apiFetch(
+        "https://jsonplaceholder.typicode.com/posts"
+    );
+
+    // Hide loading message
+    loadingMessage.style.display = "none";
+
+    // Display first five notifications
+    posts.slice(0,5).forEach(post => {
+
+        const card = document.createElement("div");
+
+        card.className = "notification-card";
+
+        card.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.body}</p>
+        `;
+
+        notificationList.appendChild(card);
+
+    });
+
+}
+
+// Load notifications
+loadNotifications();
+
+<!-- ==============================================
+     Step 53
+     Notifications Section
+============================================== -->
+
+<section id="notifications">
+
+    <h2>Notifications</h2>
+
+    <p id="loading-message">Loading notifications...</p>
+
+    <div id="notification-list"></div>
+
+    <!-- Retry button -->
+    <button id="retry-btn">Retry</button>
+
+</section>
+
+/* ==============================================
+   Retry Button Styling
+============================================== */
+
+#retry-btn{
+    display: none;
+    padding: 10px 20px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.error-message{
+    color: red;
+    font-weight: bold;
+}
+
+
+// ==============================================
+// Display Friendly Error Message
+// ==============================================
+
+// Select Retry button
+const retryButton = document.querySelector("#retry-btn");
+
+async function loadNotifications() {
+
+    // Show loading
+    loadingMessage.style.display = "block";
+
+    notificationList.innerHTML = "";
+
+    // Hide Retry button
+    retryButton.style.display = "none";
+
+    try {
+
+        // Wrong URL to simulate 404 Error
+        const posts = await apiFetch(
+            "https://jsonplaceholder.typicode.com/nonexistent"
+        );
+
+        loadingMessage.style.display = "none";
+
+        posts.forEach(post => {
+
+            const card = document.createElement("div");
+
+            card.className = "notification-card";
+
+            card.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.body}</p>
+            `;
+
+            notificationList.appendChild(card);
+
+        });
+
+    }
+    catch(error){
+
+        loadingMessage.style.display = "none";
+
+        notificationList.innerHTML = `
+            <p class="error-message">
+                Unable to load notifications.
+                Please try again.
+            </p>
+        `;
+
+        // Show Retry button
+        retryButton.style.display = "block";
+
+    }
+
+}
+
+loadNotifications();
+
+
+
+// ==============================================
+// Step 54
+// Retry Button
+// ==============================================
+
+async function fetchNotifications() {
+
+    loadingMessage.style.display = "block";
+
+    notificationList.innerHTML = "";
+
+    retryButton.style.display = "none";
+
+    try{
+
+        const posts = await apiFetch(
+            "https://jsonplaceholder.typicode.com/posts"
+        );
+
+        loadingMessage.style.display = "none";
+
+        posts.slice(0,5).forEach(post=>{
+
+            const card = document.createElement("div");
+
+            card.className = "notification-card";
+
+            card.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.body}</p>
+            `;
+
+            notificationList.appendChild(card);
+
+        });
+
+    }
+    catch(error){
+
+        loadingMessage.style.display = "none";
+
+        notificationList.innerHTML = `
+            <p class="error-message">
+                Unable to load notifications.
+            </p>
+        `;
+
+        retryButton.style.display = "block";
+
+    }
+
+}
+
+// Retry button click
+retryButton.addEventListener("click", () => {
+
+    fetchNotifications();
+
+});
+

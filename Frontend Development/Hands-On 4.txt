@@ -468,3 +468,125 @@ retryButton.addEventListener("click", () => {
 
 });
 
+
+// ======================================================
+// TASK 3
+// ======================================================
+
+<!-- ==============================================
+     Step 55
+     Adding Axios CDN
+============================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script type="module" src="script.js"></script>
+
+
+// ==============================================
+// Step 56
+// Rewrite apiFetch() using Axios
+// ==============================================
+
+async function apiFetch(url) {
+
+    try {
+
+        // Send GET request using Axios
+        const response = await axios.get(url);
+
+        // Axios automatically converts JSON to JavaScript object
+        return response.data;
+
+    }
+    catch(error){
+
+        // Pass the error to the calling function
+        throw error;
+
+    }
+
+}
+
+
+// ==============================================
+// Step 57
+// Fetch posts using query parameters
+// ==============================================
+
+async function getUserPosts() {
+
+    try {
+
+        // Fetch only posts belonging to User ID 1
+        const response = await axios.get(
+            "https://jsonplaceholder.typicode.com/posts",
+            {
+                params: {
+                    userId: 1
+                }
+            }
+        );
+
+        // Display the posts
+        console.log(response.data);
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+// Function Call
+getUserPosts();
+
+
+
+// ==============================================
+// Step 58
+// Axios Request Interceptor
+// ==============================================
+
+axios.interceptors.request.use(
+
+    function(config){
+
+        // Log every API request
+        console.log("API call started:", config.url);
+
+        // Return the request configuration
+        return config;
+
+    },
+
+    function(error){
+
+        // Return any request error
+        return Promise.reject(error);
+
+    }
+
+);
+
+
+// ==============================================
+// Step 59
+// Fetch API vs Axios Comparison
+// ==============================================
+
+/*
+---------------------------------------------------------
+| Fetch API                    | Axios
+---------------------------------------------------------
+| Built into JavaScript        | External library
+|                              | (must be added via CDN or npm)
+---------------------------------------------------------
+| Need response.json()         | Automatically converts JSON
+---------------------------------------------------------
+| Need to check response.ok    | Automatically throws errors
+| for HTTP errors (404, 500)   | for non-2xx HTTP responses
+---------------------------------------------------------
+*/

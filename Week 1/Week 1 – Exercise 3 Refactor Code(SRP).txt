@@ -1,0 +1,128 @@
+# Week 1 – Exercise 3: Refactor Code to Follow SOLID Principles
+
+## Aim
+
+* Implement the **Single Responsibility Principle (SRP)** using the SOLID design principles.
+
+---
+
+## Theory
+
+### SOLID Principles
+
+* **S** – Single Responsibility Principle (SRP)
+* **O** – Open/Closed Principle (OCP)
+* **L** – Liskov Substitution Principle (LSP)
+* **I** – Interface Segregation Principle (ISP)
+* **D** – Dependency Inversion Principle (DIP)
+
+### Single Responsibility Principle (SRP)
+
+* A class should have **only one responsibility**.
+* A class should have **only one reason to change**.
+* Each class should perform **one specific task**.
+
+---
+
+## Problem
+
+* The `Employee` class performs multiple responsibilities.
+* Calculates employee salary.
+* Saves employee data to the database.
+* Generates employee reports.
+* Violates the Single Responsibility Principle.
+
+---
+
+## Solution
+
+* Separate each responsibility into a different class.
+* `Employee` → Stores employee details.
+* `SalaryCalculator` → Calculates salary.
+* `EmployeeRepository` → Handles database operations.
+* `ReportGenerator` → Generates reports.
+
+---
+
+## Advantages
+
+* Improves code readability.
+* Enhances maintainability.
+* Promotes code reusability.
+* Simplifies testing.
+* Reduces code complexity.
+* Follows SOLID principles.
+
+---
+
+## Workflow
+
+```text
+                Employee
+                   │
+      ┌────────────┼────────────┐
+      │            │            │
+      ▼            ▼            ▼
+SalaryCalculator EmployeeRepository ReportGenerator
+      │            │            │
+Calculate Salary Save to Database Generate Report
+```
+
+---
+
+## Python Program
+
+```python
+class Employee:
+
+    def __init__(self, name, salary):
+        self.name = name
+        self.salary = salary
+
+
+class SalaryCalculator:
+
+    def calculate(self, employee):
+        print(f"Salary of {employee.name}: {employee.salary}")
+
+
+class EmployeeRepository:
+
+    def save(self, employee):
+        print(f"Saving {employee.name} to database")
+
+
+class ReportGenerator:
+
+    def generate(self, employee):
+        print(f"Generating report for {employee.name}")
+
+
+emp = Employee("Arif", 50000)
+
+salary = SalaryCalculator()
+repository = EmployeeRepository()
+report = ReportGenerator()
+
+salary.calculate(emp)
+repository.save(emp)
+report.generate(emp)
+```
+
+---
+
+## Output
+
+```text
+Salary of Arif: 50000
+Saving Arif to database
+Generating report for Arif
+```
+
+---
+
+## Conclusion
+
+* Successfully implemented the **Single Responsibility Principle (SRP)**.
+* Each class has only one responsibility.
+* The code is modular, maintainable, reusable, and easy to test.

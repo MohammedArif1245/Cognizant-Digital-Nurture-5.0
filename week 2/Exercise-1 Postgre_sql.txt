@@ -1,0 +1,159 @@
+-- ==========================================================
+-- Week 2 - Exercise 1
+-- PostgreSQL Schema with JOIN Operations
+-- ==========================================================
+
+-- ==========================================================
+-- Step 1: Create Department Table
+-- ==========================================================
+
+-- Create the Department table
+CREATE TABLE Department (
+
+    -- Unique Department ID (Primary Key)
+    dept_id INT PRIMARY KEY,
+
+    -- Department Name (Cannot be NULL)
+    dept_name VARCHAR(50) NOT NULL
+);
+
+-- ==========================================================
+-- Step 2: Create Employee Table
+-- ==========================================================
+
+-- Create the Employee table
+CREATE TABLE Employee (
+
+    -- Unique Employee ID (Primary Key)
+    emp_id INT PRIMARY KEY,
+
+    -- Employee Name
+    emp_name VARCHAR(50) NOT NULL,
+
+    -- Employee Salary
+    salary DECIMAL(10,2),
+
+    -- Department ID (Foreign Key)
+    dept_id INT,
+
+    -- Create relationship with Department table
+    FOREIGN KEY (dept_id)
+    REFERENCES Department(dept_id)
+);
+
+-- ==========================================================
+-- Step 3: Insert Records into Department Table
+-- ==========================================================
+
+-- Insert department details
+INSERT INTO Department (dept_id, dept_name)
+VALUES
+(101, 'HR'),
+(102, 'IT'),
+(103, 'Finance'),
+(104, 'Marketing');
+
+-- Display Department Table
+SELECT * FROM Department;
+
+-- ==========================================================
+-- Step 4: Insert Records into Employee Table
+-- ==========================================================
+
+-- Insert employee details
+INSERT INTO Employee (emp_id, emp_name, salary, dept_id)
+VALUES
+(1, 'Arif', 50000, 101),
+(2, 'Rahul', 60000, 102),
+(3, 'Priya', 55000, 102),
+(4, 'John', 45000, 103),
+(5, 'Sara', 70000, NULL);
+
+-- Display Employee Table
+SELECT * FROM Employee;
+
+-- ==========================================================
+-- Step 5: INNER JOIN
+-- Returns only matching records from both tables
+-- ==========================================================
+
+SELECT
+    e.emp_id,
+    e.emp_name,
+    e.salary,
+    d.dept_name
+FROM Employee e
+INNER JOIN Department d
+ON e.dept_id = d.dept_id;
+
+-- ==========================================================
+-- Step 6: LEFT JOIN
+-- Returns all employees and matching departments
+-- ==========================================================
+
+SELECT
+    e.emp_id,
+    e.emp_name,
+    e.salary,
+    d.dept_name
+FROM Employee e
+LEFT JOIN Department d
+ON e.dept_id = d.dept_id;
+
+-- ==========================================================
+-- Step 7: Add a Department Without Employees
+-- (Used to demonstrate RIGHT JOIN and FULL OUTER JOIN)
+-- ==========================================================
+
+INSERT INTO Department
+VALUES (105, 'Sales');
+
+-- ==========================================================
+-- Step 8: RIGHT JOIN
+-- Returns all departments and matching employees
+-- ==========================================================
+
+SELECT
+    e.emp_id,
+    e.emp_name,
+    e.salary,
+    d.dept_name
+FROM Employee e
+RIGHT JOIN Department d
+ON e.dept_id = d.dept_id;
+
+-- ==========================================================
+-- Step 9: FULL OUTER JOIN
+-- Returns all employees and all departments
+-- ==========================================================
+
+SELECT
+    e.emp_id,
+    e.emp_name,
+    e.salary,
+    d.dept_name
+FROM Employee e
+FULL OUTER JOIN Department d
+ON e.dept_id = d.dept_id;
+
+-- ==========================================================
+-- Step 10: Display Table Structure
+-- ==========================================================
+
+-- Display Employee table structure
+SELECT
+    column_name,
+    data_type
+FROM information_schema.columns
+WHERE table_name = 'employee';
+
+-- Display Department table structure
+SELECT
+    column_name,
+    data_type
+FROM information_schema.columns
+WHERE table_name = 'department';
+
+-- ==========================================================
+-- End of Exercise
+-- ==========================================================

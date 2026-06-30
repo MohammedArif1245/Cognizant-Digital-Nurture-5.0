@@ -1,0 +1,403 @@
+// ==========================================================
+// Week 2 - Exercise 2
+// MongoDB Aggregation Pipeline
+// ==========================================================
+
+// ==========================================================
+// Step 1: Create / Switch to Database
+// ==========================================================
+
+// Create or switch to the companyDB database
+use companyDB;
+
+
+// ==========================================================
+// Step 2: Create Employee Collection
+// ==========================================================
+
+// Insert multiple employee documents into the Employee collection
+db.Employee.insertMany([
+
+    {
+        emp_id: 1,
+        emp_name: "Arif",
+        department: "IT",
+        salary: 50000
+    },
+
+    {
+        emp_id: 2,
+        emp_name: "Rahul",
+        department: "HR",
+        salary: 40000
+    },
+
+    {
+        emp_id: 3,
+        emp_name: "Priya",
+        department: "IT",
+        salary: 60000
+    },
+
+    {
+        emp_id: 4,
+        emp_name: "John",
+        department: "Finance",
+        salary: 55000
+    },
+
+    {
+        emp_id: 5,
+        emp_name: "Sara",
+        department: "HR",
+        salary: 45000
+    }
+
+]);
+
+
+// ==========================================================
+// Step 3: Display All Documents
+// ==========================================================
+
+// Display all employee records
+db.Employee.find();
+
+
+// ==========================================================
+// Step 4: Aggregation using $match
+// Display employees from the IT department
+// ==========================================================
+
+db.Employee.aggregate([
+
+    {
+        $match: {
+            department: "IT"
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 5: Aggregation using $group
+// Calculate total salary department-wise
+// ==========================================================
+
+db.Employee.aggregate([
+
+    {
+        $group: {
+
+            // Group documents by department
+            _id: "$department",
+
+            // Calculate total salary
+            totalSalary: {
+                $sum: "$salary"
+            }
+
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 6: Aggregation using $match and $group
+// Calculate total salary of IT department
+// ==========================================================
+
+db.Employee.aggregate([
+
+    // Filter only IT department employees
+    {
+        $match: {
+            department: "IT"
+        }
+    },
+
+    // Group filtered documents
+    {
+        $group: {
+
+            // Group by department
+            _id: "$department",
+
+            // Calculate total salary
+            totalSalary: {
+                $sum: "$salary"
+            }
+
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 7: Aggregation using $avg
+// Calculate average salary department-wise
+// ==========================================================
+
+db.Employee.aggregate([
+
+    {
+        $group: {
+
+            _id: "$department",
+
+            averageSalary: {
+                $avg: "$salary"
+            }
+
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 8: Aggregation using $max
+// Find highest salary in each department
+// ==========================================================
+
+db.Employee.aggregate([
+
+    {
+        $group: {
+
+            _id: "$department",
+
+            highestSalary: {
+                $max: "$salary"
+            }
+
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 9: Aggregation using $min
+// Find lowest salary in each department
+// ==========================================================
+
+db.Employee.aggregate([
+
+    {
+        $group: {
+
+            _id: "$department",
+
+            lowestSalary: {
+                $min: "$salary"
+            }
+
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 10: Aggregation using $count
+// Count employees in each department
+// ==========================================================
+
+db.Employee.aggregate([
+
+    {
+        $group: {
+
+            _id: "$department",
+
+            employeeCount: {
+                $sum: 1
+            }
+
+        }
+    }
+
+]);
+
+
+// ==========================================================
+// Step 11: Display All Documents Again
+// ==========================================================
+
+// Verify that all documents still exist
+db.Employee.find();
+
+
+// ==========================================================
+// Output
+// ==========================================================
+
+switched to db companyDB
+
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("..."),
+    '1': ObjectId("..."),
+    '2': ObjectId("..."),
+    '3': ObjectId("..."),
+    '4': ObjectId("...")
+  }
+}
+
+Employee Collection
+
+[
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 1,
+    "emp_name": "Arif",
+    "department": "IT",
+    "salary": 50000
+  },
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 2,
+    "emp_name": "Rahul",
+    "department": "HR",
+    "salary": 40000
+  },
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 3,
+    "emp_name": "Priya",
+    "department": "IT",
+    "salary": 60000
+  },
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 4,
+    "emp_name": "John",
+    "department": "Finance",
+    "salary": 55000
+  },
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 5,
+    "emp_name": "Sara",
+    "department": "HR",
+    "salary": 45000
+  }
+]
+
+Aggregation using $match
+
+[
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 1,
+    "emp_name": "Arif",
+    "department": "IT",
+    "salary": 50000
+  },
+  {
+    "_id": ObjectId("..."),
+    "emp_id": 3,
+    "emp_name": "Priya",
+    "department": "IT",
+    "salary": 60000
+  }
+]
+
+Aggregation using $group ($sum)
+
+[
+  {
+    "_id": "IT",
+    "totalSalary": 110000
+  },
+  {
+    "_id": "HR",
+    "totalSalary": 85000
+  },
+  {
+    "_id": "Finance",
+    "totalSalary": 55000
+  }
+]
+
+Aggregation using $match + $group
+
+[
+  {
+    "_id": "IT",
+    "totalSalary": 110000
+  }
+]
+
+Aggregation using $avg
+
+[
+  {
+    "_id": "IT",
+    "averageSalary": 55000
+  },
+  {
+    "_id": "HR",
+    "averageSalary": 42500
+  },
+  {
+    "_id": "Finance",
+    "averageSalary": 55000
+  }
+]
+
+Aggregation using $max
+
+[
+  {
+    "_id": "IT",
+    "highestSalary": 60000
+  },
+  {
+    "_id": "HR",
+    "highestSalary": 45000
+  },
+  {
+    "_id": "Finance",
+    "highestSalary": 55000
+  }
+]
+
+Aggregation using $min
+
+[
+  {
+    "_id": "IT",
+    "lowestSalary": 50000
+  },
+  {
+    "_id": "HR",
+    "lowestSalary": 40000
+  },
+  {
+    "_id": "Finance",
+    "lowestSalary": 55000
+  }
+]
+
+Aggregation using Employee Count
+
+[
+  {
+    "_id": "IT",
+    "employeeCount": 2
+  },
+  {
+    "_id": "HR",
+    "employeeCount": 2
+  },
+  {
+    "_id": "Finance",
+    "employeeCount": 1
+  }
+]
